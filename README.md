@@ -442,45 +442,29 @@ This method is better suited for ongoing pipeline ingestion rather than one-off 
 
 ## How to create a Notebook
 
-Notebooks are the primary way to write and run code in Databricks. They support Python, SQL, Scala, and R — and run directly on a live cluster.
-
-### Method 1: From the sidebar
-
 1. In the left sidebar, click **+ New**
 
-2. Select **Notebook** from the dropdown
+2. From the dropdown, select **Notebook**
 
-[ADD SCREENSHOT OF NEW → NOTEBOOK MENU HERE]
+![New notebook menu](./images/new-notebook.png)
 
-3. Give your notebook a name, select the default language (Python is most common), and click **Create**
+3. A new notebook opens in a new tab
 
-[ADD SCREENSHOT OF NOTEBOOK CREATION DIALOG HERE]
+![Blank notebook](./images/notebook-created.png)
 
-### Method 2: From the Catalog (attach to a table)
+4. Click **Serverless** in the top right to attach a cluster — select **Serverless Starter Warehouse**
 
-1. Navigate to a table in the **Catalog**
+![Cluster connection dropdown](./images/notebook-connect.png)
 
-2. Click **Create** (top right) and select **Notebook**
-
-[ADD SCREENSHOT OF CATALOG CREATE → NOTEBOOK HERE]
-
-This opens a notebook pre-loaded with code to query that specific table — useful for quick exploration.
-
-### Using the notebook
-
-4. Your notebook opens attached to a cluster. If no cluster is running, click **Connect** in the top right and select or create one
-
-[ADD SCREENSHOT OF NOTEBOOK WITH CLUSTER CONNECTED HERE]
-
-5. Write code in a cell — for example:
+5. In the first cell, switch to **Python** and type:
 
 ```python
 df = spark.read.table("workspace.default.iris")
 df.show()
 ```
 
-6. Run a cell with **Shift + Enter** or click the **Run** button on the cell
+6. Run the cell with **Shift + Enter**
 
-[ADD SCREENSHOT OF NOTEBOOK WITH OUTPUT HERE]
+![Run cell button](./images/execute.png)
 
-> Each cell can be Python, SQL, Scala, or R — you can mix languages in the same notebook by adding `%sql`, `%scala`, or `%r` at the top of a cell.
+![Notebook output](./images/notebook-output.png)

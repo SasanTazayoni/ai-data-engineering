@@ -452,3 +452,12 @@ df.show()
 ![Run cell button](./images/execute.png)
 
 ![Notebook output](./images/notebook-output.png)
+
+---
+
+## Further Reading
+
+- [Lakehouse Fundamentals Course](https://www.databricks.com/resources/learn/training/lakehouse-fundamentals) — **Recommended:** complete this before finishing training
+- [The Data Lakehouse Platform for Dummies](https://www.databricks.com/resources/ebook/the-data-lakehouse-platform-for-dummies) — ebook
+- [Delta Lake Running](https://www.databricks.com/resources/ebook/delta-lake-running-oreilly) — ebook
+- [Intro to PySpark](https://docs.databricks.com/aws/en/pyspark/) — official Databricks docs

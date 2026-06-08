@@ -363,3 +363,23 @@ The core components:
 | **MLflow**           | Built-in experiment tracking, model registry, and deployment           |
 | **Workflows**        | Orchestrate multi-step data pipelines with scheduling and dependencies |
 | **Auto Loader**      | Incrementally ingest new files from cloud storage as they arrive       |
+
+---
+
+## Where to sign up for Databricks
+
+Databricks offers a **free 14-day trial** with full platform access — no credit card required.
+
+1. Go to [databricks.com](https://www.databricks.com) and click **Try Databricks**
+
+2. Fill in your email or continue with Google / Microsoft — no credit card required
+
+![Databricks sign-up page](./images/databricks-signup.png)
+
+3. Databricks will send a verification code to your email
+
+![Email verification step](./images/databricks-verify-email.png)
+
+4. Once verified, your workspace is provisioned and you land on the home page
+
+![Databricks workspace home](./images/databricks-workspace-home.png)

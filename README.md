@@ -392,7 +392,7 @@ Databricks offers a **free 14-day trial** with full platform access — no credi
 
 Databricks gives you several ways to bring data in. The simplest for getting started is uploading a file directly through the **Catalog UI**.
 
-### Method 1: Upload a file via the Catalog
+### Method: Upload a file via the Catalog
 
 1. In the left sidebar, click **Catalog**
 
@@ -421,22 +421,6 @@ Databricks gives you several ways to bring data in. The simplest for getting sta
 ![Table schema preview](./images/uploaded-table.png)
 
 Your data is now stored as a **Delta table** in Unity Catalog and is immediately queryable via notebooks or SQL editor.
-
----
-
-### Method 2: Data Ingestion sidebar (connectors)
-
-For connecting to external sources (S3, Salesforce, PostgreSQL, etc.):
-
-1. In the left sidebar under **Data Engineering**, click **Data Ingestion**
-
-2. Browse the available **Databricks connectors** — S3, Salesforce, SQL Server, Google Analytics, HubSpot, and more
-
-[SCREENSHOT OF DATA INGESTION CONNECTORS PAGE]
-
-3. Select a connector, authenticate, and configure what data to pull in
-
-This method is better suited for ongoing pipeline ingestion rather than one-off file uploads.
 
 ---
 

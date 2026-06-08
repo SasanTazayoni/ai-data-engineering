@@ -396,9 +396,11 @@ Databricks gives you several ways to bring data in. The simplest for getting sta
 
 1. In the left sidebar, click **Catalog**
 
+![Catalog in sidebar](./images/catalog.png)
+
 2. Click the **Create** button (top right) and select **Add data**
 
-[SCREENSHOT OF CATALOG WITH CREATE → ADD DATA MENU OPEN]
+![Catalog with Create menu open](./images/create-add-data.png)
 
 3. On the **Add data** page you have two options under **Files**:
    - **Create or modify table** — upload a CSV/Parquet file and turn it into a queryable Delta table
@@ -406,17 +408,17 @@ Databricks gives you several ways to bring data in. The simplest for getting sta
 
    For most use cases, choose **Create or modify table**
 
-[SCREENSHOT OF ADD DATA PAGE]
+![Create or modify table option](./images/create-or-modify-table.png)
 
 4. Drag and drop your file (CSV, TSV, Parquet, Avro, JSON) or click to browse
 
 5. Databricks will automatically detect the schema — column names, data types, and a data preview will appear. Adjust any column types if needed
 
-[SCREENSHOT OF FILE UPLOAD PREVIEW AND SCHEMA]
+![File upload drop zone](./images/upload-table.png)
 
 6. Set the **catalog**, **schema (database)**, and **table name**, then click **Create table**
 
-[SCREENSHOT OF TABLE CREATED IN CATALOG]
+![Table schema preview](./images/uploaded-table.png)
 
 Your data is now stored as a **Delta table** in Unity Catalog and is immediately queryable via notebooks or SQL editor.
 

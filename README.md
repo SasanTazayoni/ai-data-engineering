@@ -28,6 +28,7 @@ There is no fixed size threshold — data is "big" when it outgrows the tools yo
 **OLTP (Online Transaction Processing)** is a class of systems designed to handle large numbers of short, real-time transactions — things like inserting a new order, updating a user's balance, or logging a login event.
 
 Key characteristics:
+
 - Optimised for **writes and reads of individual rows**
 - High volume of **concurrent transactions**
 - Data is **current and operational** (not historical)
@@ -51,20 +52,21 @@ ACID is a set of properties that guarantee database transactions are processed r
 **OLAP (Online Analytical Processing)** is a class of systems designed for querying and analysing large volumes of historical data rather than processing individual transactions.
 
 Key characteristics:
+
 - Optimised for **complex queries across many rows** (aggregations, groupings, trends)
 - Data is typically **read-heavy** — writes are batch loads, not real-time inserts
 - Queries span **large time ranges** and multiple dimensions
 - Examples: sales reporting, business intelligence dashboards, data science workloads
 
-Where OLTP asks *"what is the current state?"*, OLAP asks *"what patterns exist across all historical data?"*
+Where OLTP asks _"what is the current state?"_, OLAP asks _"what patterns exist across all historical data?"_
 
-| | OLTP | OLAP |
-|---|---|---|
-| Purpose | Record transactions | Analyse data |
-| Query type | Simple, row-level | Complex, aggregate |
-| Data volume | Current | Historical, large |
-| Speed optimised for | Writes | Reads |
-| Example | PostgreSQL app DB | Data warehouse |
+|                     | OLTP                | OLAP               |
+| ------------------- | ------------------- | ------------------ |
+| Purpose             | Record transactions | Analyse data       |
+| Query type          | Simple, row-level   | Complex, aggregate |
+| Data volume         | Current             | Historical, large  |
+| Speed optimised for | Writes              | Reads              |
+| Example             | PostgreSQL app DB   | Data warehouse     |
 
 ---
 
@@ -93,12 +95,12 @@ Once loaded, data is organised into a schema optimised for querying — typicall
 
 ### Examples
 
-| Tool | Type |
-|---|---|
-| Snowflake | Cloud data warehouse |
-| Google BigQuery | Cloud data warehouse |
-| Amazon Redshift | Cloud data warehouse |
-| Databricks SQL | Lakehouse (warehouse-like) |
+| Tool            | Type                       |
+| --------------- | -------------------------- |
+| Snowflake       | Cloud data warehouse       |
+| Google BigQuery | Cloud data warehouse       |
+| Amazon Redshift | Cloud data warehouse       |
+| Databricks SQL  | Lakehouse (warehouse-like) |
 
 ---
 
@@ -124,13 +126,13 @@ Where a data warehouse demands clean, structured data upfront, a data lake takes
 
 ### Data Lake vs Data Warehouse
 
-| | Data Lake | Data Warehouse |
-|---|---|---|
-| Data type | Any (raw) | Structured only |
-| Schema | On read | On write |
-| Cost | Low | Higher |
-| Query speed | Slower (needs processing) | Fast |
-| Best for | ML, data science, raw storage | BI, reporting, dashboards |
+|             | Data Lake                     | Data Warehouse            |
+| ----------- | ----------------------------- | ------------------------- |
+| Data type   | Any (raw)                     | Structured only           |
+| Schema      | On read                       | On write                  |
+| Cost        | Low                           | Higher                    |
+| Query speed | Slower (needs processing)     | Fast                      |
+| Best for    | ML, data science, raw storage | BI, reporting, dashboards |
 
 ### Examples
 
@@ -166,13 +168,13 @@ This means you can run BI queries, SQL analytics, and ML workloads all against t
 
 ### Lakehouse vs the others
 
-| | Data Lake | Data Warehouse | Data Lakehouse |
-|---|---|---|---|
-| Storage cost | Low | High | Low |
-| Data types | Any | Structured | Any |
-| ACID support | No | Yes | Yes |
-| ML workloads | Yes | Limited | Yes |
-| Query performance | Slow | Fast | Fast |
+|                   | Data Lake | Data Warehouse | Data Lakehouse |
+| ----------------- | --------- | -------------- | -------------- |
+| Storage cost      | Low       | High           | Low            |
+| Data types        | Any       | Structured     | Any            |
+| ACID support      | No        | Yes            | Yes            |
+| ML workloads      | Yes       | Limited        | Yes            |
+| Query performance | Slow      | Fast           | Fast           |
 
 ### Examples
 
@@ -211,10 +213,153 @@ Traditional data lakes had no concept of updates or deletes — once data was wr
 
 ### Delta Lake vs a plain data lake
 
-| | Plain Data Lake | Delta Lake |
-|---|---|---|
-| ACID transactions | No | Yes |
-| Update/delete rows | No | Yes |
-| Time travel | No | Yes |
-| Schema enforcement | No | Yes |
-| Audit history | No | Yes (transaction log) |
+|                    | Plain Data Lake | Delta Lake            |
+| ------------------ | --------------- | --------------------- |
+| ACID transactions  | No              | Yes                   |
+| Update/delete rows | No              | Yes                   |
+| Time travel        | No              | Yes                   |
+| Schema enforcement | No              | Yes                   |
+| Audit history      | No              | Yes (transaction log) |
+
+---
+
+## What is Apache Spark?
+
+**Apache Spark** is an open-source, distributed computing engine built for processing large-scale data fast. It can run batch jobs, streaming, SQL queries, machine learning, and graph processing — all within a single unified framework.
+
+### What problem did it solve?
+
+Before Spark, the dominant tool for big data processing was **Hadoop MapReduce**. It worked, but it had a fundamental flaw: **it wrote intermediate results to disk after every step**.
+
+For a multi-stage job (filter → join → aggregate → output), that meant constant disk I/O between each stage — extremely slow for iterative workloads like machine learning, where you need to pass over the same data dozens of times.
+
+Spark solved this by keeping data **in memory (RAM)** between stages. Instead of reading and writing to disk at every step, Spark builds up a pipeline of transformations and executes them in one pass through the data. The result: Spark is typically **10–100x faster than Hadoop MapReduce** for most workloads.
+
+### How does it work? The architecture
+
+Spark runs on a **master/worker architecture** with three core components:
+
+#### Driver
+
+The **Driver** is the brain of a Spark job. It's the process that runs your code, builds the execution plan, and coordinates everything. When you write a Spark script, the Driver:
+
+1. Parses your transformations into a **DAG (Directed Acyclic Graph)** — a logical map of all steps
+2. Optimises the DAG using the **Catalyst query optimiser**
+3. Splits the work into **Tasks** and sends them to workers
+
+#### Cluster Manager
+
+The **Cluster Manager** allocates resources across the cluster. Spark supports several: YARN, Kubernetes, Mesos, or Spark's own standalone manager. Databricks manages this for you automatically.
+
+#### Executors (Workers)
+
+**Executors** are the processes running on worker nodes that actually do the computation. Each executor:
+
+- Receives tasks from the Driver
+- Processes its **partition** of the data in memory
+- Returns results back to the Driver
+
+#### RDDs, DataFrames, and partitions
+
+Spark splits data into **partitions** — chunks distributed across the cluster. Each executor works on its own partition in parallel.
+
+Data can be represented as:
+
+- **RDD (Resilient Distributed Dataset)** — the low-level building block, fault-tolerant and distributed
+- **DataFrame** — higher-level, tabular (like a SQL table), optimised by Catalyst — this is what you use day-to-day in PySpark
+
+#### Lazy evaluation
+
+Spark doesn't execute anything when you define a transformation. It builds up a plan and only runs it when you call an **action** (like `.show()`, `.count()`, or `.write()`). This allows Spark to optimise the full pipeline before touching any data.
+
+### Why did it become popular?
+
+- **Speed** — In-memory processing made it dramatically faster than Hadoop for most workloads
+- **Unified engine** — Batch, streaming, SQL, ML, and graph in one framework — no need to stitch together separate tools
+- **Easy APIs** — Python (PySpark), Scala, Java, R — accessible to data scientists, not just engineers
+- **Fault tolerance** — If a worker fails, Spark automatically recomputes lost partitions from the lineage graph
+- **Open source** — Free to use, massive community, runs anywhere (on-prem, cloud, Databricks)
+- **Databricks adoption** — The creators of Spark founded Databricks, which made Spark the default engine for cloud data work
+
+---
+
+## What is PySpark? Why do we tend to use that?
+
+**PySpark** is the Python API for Apache Spark. It lets you write Spark jobs in Python rather than Spark's native language, Scala.
+
+Under the hood, PySpark doesn't run Python on the cluster — it translates your Python code into JVM (Java Virtual Machine) instructions that Spark's engine executes. You get the full power of distributed Spark processing with the familiarity of Python syntax.
+
+### Why do we tend to use PySpark?
+
+- **Python is the data language** — The data science and data engineering ecosystem lives in Python: pandas, NumPy, scikit-learn, TensorFlow, Hugging Face. PySpark fits naturally into that world
+- **Lower barrier to entry** — Scala (Spark's native language) has a steeper learning curve. Most data professionals already know Python
+- **Same performance** — For DataFrame operations, PySpark performance is essentially identical to Scala Spark because both compile down to the same execution plan via Catalyst
+- **Notebooks** — PySpark works seamlessly in Jupyter and Databricks notebooks, which is how most data work is done interactively
+- **Pandas integration** — PySpark DataFrames can be converted to pandas with `.toPandas()`, and since Spark 3.2, you can use the **pandas API on Spark** (`pyspark.pandas`) to write familiar pandas code that runs distributed
+
+### PySpark vs plain pandas
+
+|                | pandas            | PySpark                        |
+| -------------- | ----------------- | ------------------------------ |
+| Runs on        | Single machine    | Distributed cluster            |
+| Data size      | Up to ~GBs        | TBs to PBs                     |
+| Execution      | Eager (immediate) | Lazy (planned then executed)   |
+| Syntax         | Familiar, simple  | Similar, slightly more verbose |
+| Speed at scale | Slow / crashes    | Fast                           |
+
+Use pandas for small data and local exploration. Use PySpark when the data outgrows a single machine.
+
+---
+
+## What is Databricks?
+
+**Databricks** is a cloud-based data platform built on top of Apache Spark. It was founded in 2013 by the original creators of Spark and provides a managed environment for running Spark workloads — no cluster setup, no infrastructure management, just notebooks and data.
+
+It sits at the centre of the modern data stack, combining data engineering, data science, SQL analytics, and ML in one unified platform — the **Databricks Lakehouse**.
+
+### What problems did it solve?
+
+Running Spark yourself was painful. Before Databricks, teams had to:
+
+- **Provision and manage clusters manually** — configuring Hadoop, tuning memory, handling node failures
+- **Handle infrastructure on their own** — setting up cloud VMs, networking, storage permissions
+- **Stitch together separate tools** — one tool for ETL, another for SQL, another for ML
+- **Deal with Hadoop complexity** — YARN, HDFS, and a sprawling ecosystem of brittle integrations
+
+Databricks eliminated all of this. It made Spark accessible to data engineers and data scientists without needing a dedicated infrastructure team.
+
+### How does it work?
+
+Databricks runs on your cloud provider (AWS, Azure, or GCP) inside your own account. When you spin up a cluster, Databricks provisions VMs on your behalf, installs Spark, and manages the lifecycle automatically.
+
+The core components:
+
+- **Clusters** — Managed Spark clusters that auto-scale and auto-terminate. You choose the size and Databricks handles the rest
+- **Notebooks** — Interactive notebooks (Python, SQL, Scala, R) attached to a live cluster. Code runs on the distributed cluster, results appear inline
+- **DBFS (Databricks File System)** — An abstraction over cloud storage (S3, ADLS) that makes it feel like a local filesystem
+- **Delta Lake** — Built-in as the default storage format, giving every table ACID compliance and time travel out of the box
+- **Unity Catalog** — Centralised governance layer for managing access, lineage, and discovery across all data assets
+- **Databricks Runtime** — An optimised version of Spark with performance improvements, pre-installed libraries, and GPU support
+
+### Why has it become popular?
+
+- **Managed Spark** — All the power of Spark, none of the infrastructure headache
+- **Collaborative notebooks** — Multiple people can work in the same notebook simultaneously, like Google Docs for data
+- **One platform for everything** — ETL, SQL analytics, ML model training, and serving all in one place
+- **Delta Lake by default** — Reliable, versioned, ACID-compliant storage without extra setup
+- **Auto-scaling clusters** — Clusters grow and shrink with the workload, keeping costs down
+- **Enterprise adoption** — Used by thousands of companies (Microsoft, Comcast, Shell) — strong community and support
+- **Tight cloud integration** — Native integrations with AWS, Azure, and GCP services
+
+### Key features
+
+| Feature              | Description                                                            |
+| -------------------- | ---------------------------------------------------------------------- |
+| **Managed Clusters** | Spin up Spark clusters in seconds, auto-scale, auto-terminate          |
+| **Notebooks**        | Interactive, collaborative, multi-language (Python, SQL, Scala, R)     |
+| **Delta Lake**       | ACID transactions, time travel, schema enforcement on all tables       |
+| **Unity Catalog**    | Data governance, access control, and lineage across the platform       |
+| **Databricks SQL**   | Run SQL queries on lakehouse data with a warehouse-like interface      |
+| **MLflow**           | Built-in experiment tracking, model registry, and deployment           |
+| **Workflows**        | Orchestrate multi-step data pipelines with scheduling and dependencies |
+| **Auto Loader**      | Incrementally ingest new files from cloud storage as they arrive       |

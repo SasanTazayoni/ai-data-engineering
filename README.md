@@ -370,6 +370,8 @@ The core components:
 
 Databricks offers a **free 14-day trial** with full platform access — no credit card required.
 
+> Already have an account? Log in directly at [login.databricks.com](https://login.databricks.com)
+
 1. Go to [databricks.com](https://www.databricks.com) and click **Try Databricks**
 
 2. Fill in your email or continue with Google / Microsoft — no credit card required
@@ -383,3 +385,100 @@ Databricks offers a **free 14-day trial** with full platform access — no credi
 4. Once verified, your workspace is provisioned and you land on the home page
 
 ![Databricks workspace home](./images/databricks-workspace-home.png)
+
+---
+
+## How to ingest data
+
+Databricks gives you several ways to bring data in. The simplest for getting started is uploading a file directly through the **Catalog UI**.
+
+### Method 1: Upload a file via the Catalog
+
+1. In the left sidebar, click **Catalog**
+
+2. Click the **Create** button (top right) and select **Add data**
+
+[SCREENSHOT OF CATALOG WITH CREATE → ADD DATA MENU OPEN]
+
+3. On the **Add data** page you have two options under **Files**:
+   - **Create or modify table** — upload a CSV/Parquet file and turn it into a queryable Delta table
+   - **Upload files to a volume** — store raw files in Unity Catalog without creating a table
+
+   For most use cases, choose **Create or modify table**
+
+[SCREENSHOT OF ADD DATA PAGE]
+
+4. Drag and drop your file (CSV, TSV, Parquet, Avro, JSON) or click to browse
+
+5. Databricks will automatically detect the schema — column names, data types, and a data preview will appear. Adjust any column types if needed
+
+[SCREENSHOT OF FILE UPLOAD PREVIEW AND SCHEMA]
+
+6. Set the **catalog**, **schema (database)**, and **table name**, then click **Create table**
+
+[SCREENSHOT OF TABLE CREATED IN CATALOG]
+
+Your data is now stored as a **Delta table** in Unity Catalog and is immediately queryable via notebooks or SQL editor.
+
+---
+
+### Method 2: Data Ingestion sidebar (connectors)
+
+For connecting to external sources (S3, Salesforce, PostgreSQL, etc.):
+
+1. In the left sidebar under **Data Engineering**, click **Data Ingestion**
+
+2. Browse the available **Databricks connectors** — S3, Salesforce, SQL Server, Google Analytics, HubSpot, and more
+
+[SCREENSHOT OF DATA INGESTION CONNECTORS PAGE]
+
+3. Select a connector, authenticate, and configure what data to pull in
+
+This method is better suited for ongoing pipeline ingestion rather than one-off file uploads.
+
+---
+
+## How to create a Notebook
+
+Notebooks are the primary way to write and run code in Databricks. They support Python, SQL, Scala, and R — and run directly on a live cluster.
+
+### Method 1: From the sidebar
+
+1. In the left sidebar, click **+ New**
+
+2. Select **Notebook** from the dropdown
+
+[ADD SCREENSHOT OF NEW → NOTEBOOK MENU HERE]
+
+3. Give your notebook a name, select the default language (Python is most common), and click **Create**
+
+[ADD SCREENSHOT OF NOTEBOOK CREATION DIALOG HERE]
+
+### Method 2: From the Catalog (attach to a table)
+
+1. Navigate to a table in the **Catalog**
+
+2. Click **Create** (top right) and select **Notebook**
+
+[ADD SCREENSHOT OF CATALOG CREATE → NOTEBOOK HERE]
+
+This opens a notebook pre-loaded with code to query that specific table — useful for quick exploration.
+
+### Using the notebook
+
+4. Your notebook opens attached to a cluster. If no cluster is running, click **Connect** in the top right and select or create one
+
+[ADD SCREENSHOT OF NOTEBOOK WITH CLUSTER CONNECTED HERE]
+
+5. Write code in a cell — for example:
+
+```python
+df = spark.read.table("workspace.default.iris")
+df.show()
+```
+
+6. Run a cell with **Shift + Enter** or click the **Run** button on the cell
+
+[ADD SCREENSHOT OF NOTEBOOK WITH OUTPUT HERE]
+
+> Each cell can be Python, SQL, Scala, or R — you can mix languages in the same notebook by adding `%sql`, `%scala`, or `%r` at the top of a cell.

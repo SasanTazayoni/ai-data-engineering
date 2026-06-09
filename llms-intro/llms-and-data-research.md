@@ -227,6 +227,34 @@ In a data pipeline — particularly one involving RAG — semantic similarity is
 
 This is what makes modern search and retrieval so much more powerful than traditional keyword matching. A user asking _"how do I cancel my subscription?"_ can be matched to a document titled _"terminating your account"_ — because the underlying meaning is similar, even though none of the key words overlap. A traditional database query would return nothing.
 
-Semantic similarity is typically computed by converting text into numerical representations called **embeddings**, and then measuring the distance between those representations in vector space — a concept explored in the next section.
+Semantic similarity is typically computed by converting text into numerical representations called **embeddings**, and then measuring the distance between those representations in vector space — both of which are covered in the sections below.
 
 ---
+
+## Embeddings
+
+### What are Embeddings?
+
+An embedding is a way of representing a piece of text — a word, sentence, or entire document — as a **list of numbers**. These numbers are not arbitrary; they are produced by a model that has learned to encode meaning, so that text with similar meanings produces similar numbers.
+
+For example, the words *"king"* and *"queen"* would produce embeddings that are numerically close to each other, because the model has learned they occupy a similar region of meaning. The words *"king"* and *"bicycle"*, by contrast, would produce embeddings that are numerically far apart.
+
+Each embedding is typically a list of hundreds or thousands of numbers — for instance, a model might represent every piece of text as a list of 1,536 numbers. This list is called a **vector**, and the space defined by all possible vectors is called **vector space** — both explored in the next section.
+
+### Why are Embeddings Important in AI Systems?
+
+Embeddings are the bridge between human language and mathematics. Without them, a computer has no way to reason about the *meaning* of text — it can only compare characters and count words. With embeddings, meaning becomes a measurable quantity that can be stored, searched, and compared at scale.
+
+This makes embeddings foundational to several critical capabilities in AI systems:
+
+- **Semantic search** — instead of matching keywords, a search system converts the query into an embedding and finds the stored documents whose embeddings are closest in value, returning results that are similar in meaning rather than wording.
+- **RAG retrieval** — when a user asks a question, it is embedded and compared against a database of pre-embedded documents to find the most relevant ones to inject into the prompt.
+- **Recommendations** — products, articles, or content can be embedded and compared so that similar items are surfaced to users, even if they share no descriptive keywords.
+- **Classification** — text can be categorised by comparing its embedding against known reference embeddings, without needing hand-coded rules.
+- **Clustering** — large volumes of text can be grouped by meaning automatically, useful for analysing support tickets, customer feedback, or research documents at scale.
+
+In short, embeddings allow AI systems to work with language the way humans do — by meaning, not by exact words. They are what makes semantic similarity computable, and what makes modern AI-powered search and retrieval fundamentally different from anything that came before.
+
+---
+
+*Continued: Vectors, Vector Space, and Cosine Similarity.*

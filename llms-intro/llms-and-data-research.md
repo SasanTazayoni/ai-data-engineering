@@ -204,3 +204,29 @@ This is particularly powerful in data environments where information changes fre
 ![RAG Pipeline Diagram](../images/rag-pipeline-diagram.png)
 
 ---
+
+## Semantic Similarity
+
+Semantic similarity is a measure of how alike two pieces of text are **in meaning**, rather than in exact wording. Two sentences can share no words in common and still be semantically similar — and two sentences can share many words while meaning entirely different things.
+
+For example, _"The dog chased the ball"_ and _"The canine ran after the sphere"_ are worded completely differently but convey the same meaning. Conversely, _"I saw the bank"_ could refer to a riverbank or a financial institution — identical words, very different meanings depending on context.
+
+This distinction matters enormously for LLMs, because language is rarely precise. Users don't always phrase questions the same way, documents don't always use the exact keywords you'd expect, and meaning is often implied rather than stated explicitly. A system that can only match on exact words will miss relevant information constantly.
+
+### Why Traditional Databases Can't Do This
+
+Traditional databases are built around **exact matching**. A SQL query with a `WHERE` clause looks for rows where a value precisely equals, contains, or matches a pattern. A `LIKE` search can find substrings, but it has no concept of meaning — it is purely character-level comparison. If the word isn't there, the record won't be returned.
+
+Even traditional full-text search engines, which are more sophisticated, still rely primarily on **keyword frequency** — counting how often terms appear and ranking results accordingly. This approach, known as TF-IDF or BM25, is better than exact matching but still fundamentally operates on word overlap rather than meaning.
+
+Neither approach can answer the question _"are these two things talking about the same concept?"_ — because they have no model of what words mean, only a record of whether they appear.
+
+### Why Semantic Similarity Matters in a Data Context
+
+In a data pipeline — particularly one involving RAG — semantic similarity is what allows the retrieval step to work effectively. Rather than searching for documents that contain the exact words in a user's query, the system finds documents that are **closest in meaning**, even if the wording is entirely different.
+
+This is what makes modern search and retrieval so much more powerful than traditional keyword matching. A user asking _"how do I cancel my subscription?"_ can be matched to a document titled _"terminating your account"_ — because the underlying meaning is similar, even though none of the key words overlap. A traditional database query would return nothing.
+
+Semantic similarity is typically computed by converting text into numerical representations called **embeddings**, and then measuring the distance between those representations in vector space — a concept explored in the next section.
+
+---

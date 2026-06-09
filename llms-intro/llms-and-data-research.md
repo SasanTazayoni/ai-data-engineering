@@ -290,3 +290,19 @@ The diagram below illustrates this with a small set of words. Notice how _King_ 
 This is what makes vector space so powerful in AI systems. Rather than asking _"do these two things share any words?"_, the system can ask _"how close are these two things in space?"_ — a question that naturally captures meaning, context, and relationship in a way keyword matching never could.
 
 ---
+
+## Cosine Similarity
+
+### What is Cosine Similarity?
+
+Cosine similarity is the method most commonly used to measure how similar two vectors are in vector space. Rather than measuring the straight-line distance between two points, it measures the **angle between two vectors** — and it is this angle that determines similarity.
+
+The smaller the angle between two vectors, the more similar they are. If two vectors point in exactly the same direction, the angle between them is 0° and their cosine similarity is 1 — perfectly similar. If they point in completely opposite directions, the angle is 180° and their cosine similarity is -1 — completely dissimilar. Most comparisons fall somewhere in between. Angle is used rather than straight-line distance because it only captures the **direction** of the vectors, which is where meaning lives — unaffected by how long or short each vector is.
+
+![Cosine Similarity](../images/cosine-similarity-visual.png)
+
+In the diagram above, vectors A and B represent two different items — an orange and an apple. The angle θ between them is what cosine similarity measures. A small θ means the two items are close in meaning; a large θ means they are far apart.
+
+### Why it Matters
+
+In a RAG pipeline, when a user submits a query it is converted into a vector. That vector is then compared against all stored document vectors using cosine similarity. The documents with the highest similarity scores — the smallest angles — are the ones retrieved and injected into the prompt. This is the mechanism that makes semantic search work: not keyword overlap, but directional proximity in vector space.

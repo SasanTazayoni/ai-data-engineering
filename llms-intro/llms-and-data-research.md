@@ -237,13 +237,15 @@ Semantic similarity is typically computed by converting text into numerical repr
 
 An embedding is a way of representing a piece of text — a word, sentence, or entire document — as a **list of numbers**. These numbers are not arbitrary; they are produced by a model that has learned to encode meaning, so that text with similar meanings produces similar numbers.
 
-For example, the words *"king"* and *"queen"* would produce embeddings that are numerically close to each other, because the model has learned they occupy a similar region of meaning. The words *"king"* and *"bicycle"*, by contrast, would produce embeddings that are numerically far apart.
+For example, the words _"king"_ and _"queen"_ would produce embeddings that are numerically close to each other, because the model has learned they occupy a similar region of meaning. The words _"king"_ and _"bicycle"_, by contrast, would produce embeddings that are numerically far apart.
 
 Each embedding is typically a list of hundreds or thousands of numbers — for instance, a model might represent every piece of text as a list of 1,536 numbers. This list is called a **vector**, and the space defined by all possible vectors is called **vector space** — both explored in the next section.
 
+![Word2Vec Embeddings](../images/embeddings-visual.png)
+
 ### Why are Embeddings Important in AI Systems?
 
-Embeddings are the bridge between human language and mathematics. Without them, a computer has no way to reason about the *meaning* of text — it can only compare characters and count words. With embeddings, meaning becomes a measurable quantity that can be stored, searched, and compared at scale.
+Embeddings are the bridge between human language and mathematics. Without them, a computer has no way to reason about the _meaning_ of text — it can only compare characters and count words. With embeddings, meaning becomes a measurable quantity that can be stored, searched, and compared at scale.
 
 This makes embeddings foundational to several critical capabilities in AI systems:
 
@@ -257,4 +259,34 @@ In short, embeddings allow AI systems to work with language the way humans do �
 
 ---
 
-*Continued: Vectors, Vector Space, and Cosine Similarity.*
+## Vectors
+
+### What are Vectors?
+
+A vector is simply a **list of numbers**. In mathematics, a vector represents both a magnitude (size) and a direction — typically visualised as an arrow pointing from one location to another in space.
+
+In the context of LLMs and embeddings, a vector is the numerical form that a piece of text takes after being processed by an embedding model. When a model converts the word _"king"_ into an embedding, the result is a vector — a long list of numbers that encodes where that word sits in the model's learned understanding of language.
+
+### Example of a Vector
+
+The diagram below shows a simple 2D vector — an arrow from the origin point O to point A at coordinates (2, 3).
+
+![Vector Example](../images/vectors-example.png)
+
+In this example, the vector is represented as (2, 3) — two numbers defining its position in space. In a real embedding model, a vector works the same way but instead of 2 numbers it might have 768, 1,536, or even more — one number per dimension. The principle is identical: a fixed list of numbers that places the word or sentence at a precise location in a high-dimensional space.
+
+---
+
+## Vector Space
+
+Vector space is the **shared environment in which all vectors exist**. When an embedding model converts thousands of words or sentences into vectors, every single one of them gets placed into the same space — meaning their positions can be directly compared against one another.
+
+Think of it like a map. Each word is a pin dropped at a specific location. Words with similar meanings end up pinned close together. Words with very different meanings end up far apart. The map itself — the space containing all those pins — is the vector space.
+
+The diagram below illustrates this with a small set of words. Notice how _King_ and _Queen_ sit close together, as do _Man_ and _Woman_ — and how the relationships between them are consistent and directional.
+
+![Vector Space](../images/vector-space-visual.png)
+
+This is what makes vector space so powerful in AI systems. Rather than asking _"do these two things share any words?"_, the system can ask _"how close are these two things in space?"_ — a question that naturally captures meaning, context, and relationship in a way keyword matching never could.
+
+---

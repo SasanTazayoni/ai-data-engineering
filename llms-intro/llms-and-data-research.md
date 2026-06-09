@@ -189,9 +189,7 @@ This makes LLMs particularly valuable in enterprise and data environments, where
 
 **Retrieval Augmented Generation (RAG)** is the technique that brings external data and LLMs together in a structured, repeatable way. Rather than relying solely on what the model learned during training, RAG supplements the model's response by first retrieving relevant information from an external source and injecting it into the prompt before generation occurs.
 
-At a high level, an LLM operating with RAG follows three core steps: first, **retrieving relevant data** from a source such as a database, document store, or search index; then **injecting that data as context** into the prompt, giving the model the information it needs to reason about; and finally **generating a response** grounded in both its training knowledge and the provided context.
-
-In detail, the pipeline follows a clear sequence:
+The pipeline follows a clear sequence:
 
 1. A **user submits a question**.
 2. The system **retrieves relevant content** from an external data store — such as a document repository, knowledge base, or database.
@@ -297,7 +295,9 @@ This is what makes vector space so powerful in AI systems. Rather than asking _"
 
 Cosine similarity is the method most commonly used to measure how similar two vectors are in vector space. Rather than measuring the straight-line distance between two points, it measures the **angle between two vectors** — and it is this angle that determines similarity.
 
-The smaller the angle between two vectors, the more similar they are. If two vectors point in exactly the same direction, the angle between them is 0° and their cosine similarity is 1 — perfectly similar. If they point in completely opposite directions, the angle is 180° and their cosine similarity is -1 — completely dissimilar. Most comparisons fall somewhere in between. Angle is used rather than straight-line distance because it only captures the **direction** of the vectors, which is where meaning lives — unaffected by how long or short each vector is.
+The smaller the angle between two vectors, the more similar they are. If two vectors point in exactly the same direction, the angle between them is 0° and their cosine similarity is 1 — perfectly similar. If they point in completely opposite directions, the angle is 180° and their cosine similarity is -1 — completely dissimilar. Most comparisons fall somewhere in between.
+
+Angle is used rather than straight-line distance because it only captures the **direction** of the vectors, which is where meaning lives — unaffected by how long or short each vector is.
 
 ![Cosine Similarity](../images/cosine-similarity-visual.png)
 

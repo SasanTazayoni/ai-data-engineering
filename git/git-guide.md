@@ -308,6 +308,95 @@ This opens an editor showing the last 3 commits, each prefixed with a command. C
 
 ---
 
+## Connecting to GitHub with SSH
+
+By default, Git communicates with GitHub over **HTTPS** — you authenticate with a username and personal access token. An alternative is **SSH**, where authentication is handled by a cryptographic key pair instead. This is more secure, requires no token management, and once set up, is entirely seamless.
+
+### How SSH Authentication Works
+
+SSH uses **asymmetric cryptography** — a matched key pair where what one key encrypts, only the other can decrypt. You generate two keys: a **private key** that stays on your machine only, and a **public key** that you give to GitHub. When you connect, GitHub challenges your machine to prove it holds the matching private key — this is resolved mathematically, without the private key ever being transmitted over the network.
+
+Think of it as a padlock and key — you give GitHub the padlock (public key), you keep the key (private key).
+
+### Step 1 — Generate an SSH key pair
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+Press **Enter** to accept the default save location (`~/.ssh/id_ed25519`), then enter a strong passphrase when prompted. This creates two files:
+
+- `~/.ssh/id_ed25519` — your **private key** (never share this with anyone)
+- `~/.ssh/id_ed25519.pub` — your **public key** (this is what you give to GitHub)
+
+The `-t ed25519` flag specifies the **Ed25519** algorithm — a modern elliptic curve cryptography standard that is faster and more secure than the older RSA algorithm. The `-C` flag tags the key with your email for identification purposes only.
+
+The passphrase encrypts the private key file on disk. Even if someone obtained the file, they could not use it without the passphrase.
+
+### Step 2 — Start the SSH agent and add your key
+
+The **SSH agent** is a background process that holds your decrypted private key in memory for the duration of your session. Without it, you would need to enter your passphrase on every single push. With it running, you enter the passphrase once and the agent handles authentication silently.
+
+On Git Bash (Windows):
+
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+```
+
+On PowerShell (Windows — run as administrator first):
+
+```powershell
+Get-Service -Name ssh-agent | Set-Service -StartupType Manual
+Start-Service ssh-agent
+ssh-add C:\Users\YourName\.ssh\id_ed25519
+```
+
+### Step 3 — Add your public key to GitHub
+
+Copy the public key to your clipboard:
+
+```bash
+clip < ~/.ssh/id_ed25519.pub
+```
+
+Then in GitHub: **Profile → Settings → SSH and GPG keys → New SSH key**. Give it a descriptive title, paste the key, and save.
+
+### Step 4 — Test the connection
+
+```bash
+ssh -T git@github.com
+```
+
+The first time you connect, your machine won't recognise GitHub's server and will ask you to confirm its fingerprint — type `yes`. GitHub's server is then saved to `~/.ssh/known_hosts` and you won't be asked again.
+
+A successful response looks like: `Hi username! You've successfully authenticated, but GitHub does not provide shell access.` The shell access message is normal — it simply means you cannot log into GitHub's server as a machine, only authenticate for Git operations.
+
+### Step 5 — Switch your repository to SSH
+
+Check your current remote URL:
+
+```bash
+git remote -v
+```
+
+If it shows `https://github.com/...`, update it:
+
+```bash
+git remote set-url origin git@github.com:<username>/<repo>.git
+```
+
+From this point, all `git push` and `git pull` operations use SSH automatically.
+
+### Why use SSH over HTTPS?
+
+- **No credentials on every push** — HTTPS requires a personal access token each time unless cached. SSH authenticates silently via your key pair.
+- **More secure** — your private key never leaves your machine. A token can be intercepted or leaked; an SSH private key is cryptographically tied to your machine.
+- **No token expiry** — personal access tokens expire and need rotating. SSH keys remain valid until you explicitly revoke them.
+- **Transfers to other contexts** — SSH is the standard for authenticating with remote servers generally, not just GitHub. The same approach applies when deploying code, accessing cloud VMs, and more.
+
+---
+
 ## Best Practices
 
 **Commit often, but make each commit meaningful.** Small, focused commits are easier to review, easier to revert if something goes wrong, and produce a history that clearly explains the evolution of the codebase. Avoid the two extremes — committing every single line change, or committing enormous batches of unrelated work.

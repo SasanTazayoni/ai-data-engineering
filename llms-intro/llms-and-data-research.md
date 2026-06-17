@@ -241,6 +241,8 @@ Each embedding is typically a list of hundreds or thousands of numbers — for i
 
 ![Word2Vec Embeddings](../images/embeddings-visual.png)
 
+![Embeddings Example](../images/embeddings-example.png)
+
 ### Why are Embeddings Important in AI Systems?
 
 Embeddings are the bridge between human language and mathematics. Without them, a computer has no way to reason about the _meaning_ of text — it can only compare characters and count words. With embeddings, meaning becomes a measurable quantity that can be stored, searched, and compared at scale.

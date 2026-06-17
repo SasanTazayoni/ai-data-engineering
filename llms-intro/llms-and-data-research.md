@@ -201,6 +201,19 @@ This is particularly powerful in data environments where information changes fre
 
 ![RAG Pipeline Diagram](../images/rag-pipeline-diagram.png)
 
+### Rerankers
+
+The retrieval step in a RAG pipeline — finding documents by cosine similarity — is fast and works well, but it is not perfectly precise. Embedding-based retrieval casts a wide net, returning the most semantically similar documents overall. However, similarity in vector space does not always translate to relevance for a specific query.
+
+A **reranker** is a second model that sits after the initial retrieval step and scores each retrieved document more carefully against the query. Rather than comparing pre-computed vectors, a reranker reads the query and each document together — as a pair — and outputs a precise relevance score. The documents are then reordered by this score before the top results are passed to the LLM.
+
+The result is a two-stage pipeline:
+
+1. **Retrieval** — embedding-based search quickly narrows the full document store down to a candidate set (e.g. the top 50 results)
+2. **Reranking** — the reranker scores each candidate against the query and reorders them, so only the most genuinely relevant documents (e.g. the top 5) make it into the prompt
+
+This approach combines the speed of vector search with the precision of a model that actually reads the content. Rerankers are sometimes called **cross-encoders**, because they encode the query and document together rather than independently.
+
 ---
 
 ## Semantic Similarity

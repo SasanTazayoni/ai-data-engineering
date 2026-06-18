@@ -74,6 +74,13 @@ A **Data Warehouse** is a central repository that consolidates data from multipl
 3. **Denormalised schemas** — common patterns are the star schema (one central fact table surrounded by dimension tables) and snowflake schema. Fewer joins means faster queries.
 4. **Massively Parallel Processing (MPP)** — queries are split across many nodes, each processing a slice of the data in parallel, then results are merged.
 
+### Advantages
+
+- Fast query performance on structured data — columnar storage and MPP make aggregations over billions of rows practical
+- Data is clean and consistent — ETL enforces quality before data enters the warehouse
+- Strong ACID compliance — safe for concurrent reads and writes
+- Well-suited for BI tools and SQL analysts — standard SQL interface, predictable schemas
+
 ### Limitations
 
 - Rigid schemas: changing the structure is costly (ETL pipelines must be updated)
@@ -357,6 +364,23 @@ Databricks addressed all of these in one platform.
 | **Photon Engine** | Databricks' native vectorised query engine (C++) — faster than standard Spark for SQL |
 | **AutoML** | Automated baseline model generation with explainability |
 | **Vector Search** | Built-in vector database for AI/RAG applications |
+
+---
+
+## The Data Intelligence Platform
+
+In 2024 Databricks rebranded its platform as the **Data Intelligence Platform** — an expansion beyond data engineering that layers AI-native capabilities on top of the existing Lakehouse. The core (Spark, Delta Lake, notebooks, jobs) is unchanged; this adds tools for building and querying with AI.
+
+| Feature | Description |
+|---|---|
+| **Mosaic AI** | Suite of tools for building, fine-tuning, and serving LLMs and ML models at scale |
+| **AI/BI** | Natural language interface for your data — describe what you want to see and Databricks generates dashboards and queries |
+| **Genie** | An AI assistant that answers questions about your Delta tables in plain English, without writing SQL |
+| **Vector Search** | Built-in vector database for storing embeddings and powering RAG (Retrieval-Augmented Generation) applications |
+| **Model Serving** | One-click deployment of ML models and LLMs as REST API endpoints |
+| **Lakehouse Monitoring** | Automated data and model quality monitoring with drift detection |
+
+The key idea behind the rebrand: the platform doesn't just store and process your data — it understands the semantics of it, enabling AI features that are aware of what your tables actually mean.
 
 ---
 

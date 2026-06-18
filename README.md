@@ -1,6 +1,6 @@
 # AI Data Engineering - Databricks and PySpark Research
 
-![Python](./tech/python.png) ![Apache Spark](./tech/apachespark.png) ![Databricks](./tech/databricks.png) ![VSCode](./tech/vscode.png) ![Shell](./tech/shell.png)
+![Python](./tech/python.png) ![Apache Spark](./tech/apachespark.png) ![Databricks](./tech/databricks.png) ![AWS](./tech/aws.png) ![VSCode](./tech/vscode.png) ![Shell](./tech/shell.png) ![Claude](./tech/claude.png)
 
 ---
 

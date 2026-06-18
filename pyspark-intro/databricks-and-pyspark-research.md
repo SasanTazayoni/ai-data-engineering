@@ -512,7 +512,26 @@ display(iris)
 
 ![Iris DataFrame loaded](../images/iris-loaded.png)
 
-### Task 2 — Inspect the schema
+### Task 2 — Create a DataFrame from Python data
+
+`spark.createDataFrame()` builds a DataFrame directly from a Python list. You can pass a list of tuples alongside a schema that defines column names and types. Useful for creating small test datasets without needing a file or table.
+
+The schema is defined using `StructType` (the overall structure) and `StructField` (one entry per column, specifying name, type, and whether nulls are allowed). Common types are `StringType()`, `IntegerType()`, `DoubleType()`, and `BooleanType()`.
+
+```python
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType
+
+schema = StructType([
+    StructField("name", StringType(), True),
+    StructField("value", DoubleType(), True)
+])
+
+data = [("a", 1.0), ("b", 2.5), ("c", 3.1)]
+df = spark.createDataFrame(data, schema)
+df.show()
+```
+
+### Task 3 — Inspect the schema
 
 `printSchema()` prints the DataFrame's schema as a readable tree — column names, data types, and whether each column is nullable. More readable than `.dtypes` for DataFrames with many or nested columns.
 
@@ -520,7 +539,7 @@ display(iris)
 iris.printSchema()
 ```
 
-### Task 3 — Output the contained dtypes
+### Task 4 — Output the contained dtypes
 
 `.dtypes` returns a list of tuples showing each column name paired with its data type as a plain Python list — useful for programmatic inspection (e.g. looping over columns to check types).
 
@@ -530,7 +549,7 @@ iris.dtypes
 
 ![Iris dtypes](../images/iris-dtypes.png)
 
-### Task 4 — Output columns
+### Task 5 — Output columns
 
 `.columns` returns a plain Python list of all column names in the DataFrame. Useful for programmatically referencing or looping over columns.
 
@@ -540,24 +559,25 @@ iris.columns
 
 ![Iris columns](../images/iris-columns.png)
 
-### Task 5 — Count the rows
+### Task 6 — Count the rows
 
-`.count()` is an action that triggers execution and returns the total number of rows as a Python integer. It's one of the most commonly used actions for sanity-checking data after a filter or join.
+`.count()` is an action that triggers execution and returns the total number of rows as a Python integer. One of the most commonly used actions for sanity-checking data after a filter or join.
 
 ```python
 iris.count()
 ```
 
-### Task 6 — Peek at the first rows
+### Task 7 — Peek at the first rows
 
-`.first()` returns the very first row as a `Row` object. `.take(n)` returns the first `n` rows as a Python list of `Row` objects. Both are useful for quickly inspecting data without loading the whole DataFrame.
+`.first()` returns the very first row as a `Row` object. `.take(n)` returns the first `n` rows as a Python list of `Row` objects. `.head(n)` is an alias for `.take(n)`. All are useful for quickly inspecting data without materialising the whole DataFrame.
 
 ```python
 iris.first()
 iris.take(3)
+iris.head(3)
 ```
 
-### Task 7 — Use the describe() method
+### Task 8 — Use the describe() method
 
 `.describe()` generates summary statistics for each column — count, mean, standard deviation, min, and max. Only works on numeric and string columns. `.show()` prints the result as a table in the notebook output.
 
@@ -567,7 +587,7 @@ iris.describe().show()
 
 ![Iris describe](../images/iris-describe.png)
 
-### Task 8 — Select the "sepal_length" column
+### Task 9 — Select the "sepal_length" column
 
 `.select()` returns a new DataFrame containing only the specified column(s). This is the PySpark equivalent of `SELECT column FROM table` in SQL.
 
@@ -577,7 +597,7 @@ iris.select("sepal_length").show()
 
 ![Iris select](../images/iris-select.png)
 
-### Task 9 — Limit the output to 5 rows
+### Task 10 — Limit the output to 5 rows
 
 `.limit(n)` returns a new DataFrame containing only the first `n` rows — equivalent to `SELECT ... LIMIT n` in SQL. Unlike `.take()`, it returns a DataFrame rather than a Python list, so further transformations can be chained.
 
@@ -585,7 +605,7 @@ iris.select("sepal_length").show()
 iris.limit(5).show()
 ```
 
-### Task 10 — Get the distinct species
+### Task 11 — Get the distinct species
 
 `.distinct()` removes duplicate rows from a DataFrame. Combined with `.select("species")`, it returns only the unique species values — equivalent to `SELECT DISTINCT species FROM iris` in SQL.
 
@@ -595,7 +615,15 @@ iris.select("species").distinct().show()
 
 ![Iris distinct](../images/iris-distinct.png)
 
-### Task 11 — Create a new DataFrame with the "species" column dropped
+### Task 12 — Deduplicate by a specific column
+
+`.dropDuplicates()` removes duplicate rows like `.distinct()`, but lets you specify which columns to consider — rows are deduplicated based only on those columns, keeping the first occurrence.
+
+```python
+iris.dropDuplicates(["species"]).show()
+```
+
+### Task 13 — Drop a column
 
 `.drop()` returns a new DataFrame with the specified column removed. The original `iris` DataFrame is unchanged — PySpark DataFrames are immutable.
 
@@ -605,7 +633,15 @@ iris.drop("species").show()
 
 ![Iris drop](../images/iris-drop.png)
 
-### Task 12 — Filter by sepal length over 5.5
+### Task 14 — Rename a column
+
+`.withColumnRenamed()` returns a new DataFrame with one column renamed. The original DataFrame is unchanged.
+
+```python
+iris.withColumnRenamed("sepal_length", "sepal_len").show()
+```
+
+### Task 15 — Filter by sepal length over 5.5
 
 `.filter()` returns a new DataFrame containing only rows that match the condition — equivalent to `WHERE` in SQL.
 
@@ -615,7 +651,23 @@ iris.filter(iris.sepal_length > 5.5).show()
 
 ![Iris filter](../images/iris-filter.png)
 
-### Task 13 — Use the LIKE keyword to filter for species starting with "v"
+### Task 16 — Filter using a list of values
+
+`.isin()` tests whether a column's value appears in a given list — equivalent to `WHERE column IN (...)` in SQL.
+
+```python
+iris.filter(iris.species.isin(["setosa", "virginica"])).show()
+```
+
+### Task 17 — Filter using a range
+
+`.between(lower, upper)` returns rows where the column value falls within the inclusive range — equivalent to `WHERE column BETWEEN a AND b` in SQL.
+
+```python
+iris.filter(iris.sepal_length.between(5.0, 6.0)).show()
+```
+
+### Task 18 — Use the LIKE keyword to filter for species starting with "v"
 
 `.like()` applies SQL-style pattern matching. `"v%"` means "starts with v" — the `%` is a wildcard matching any characters after it. This returns both `versicolor` and `virginica`.
 
@@ -625,7 +677,16 @@ iris.filter(iris.species.like("v%")).show()
 
 ![Iris like](../images/iris-like.png)
 
-### Task 14 — Sort by sepal length descending
+### Task 19 — Filter using startswith and endswith
+
+`.startswith()` and `.endswith()` are Python-style string methods on a column. More readable than `.like()` when you only need prefix or suffix matching.
+
+```python
+iris.filter(iris.species.startswith("vi")).show()
+iris.filter(iris.species.endswith("ica")).show()
+```
+
+### Task 20 — Sort by sepal length descending
 
 `.orderBy()` returns a new DataFrame sorted by one or more columns. By default the sort is ascending — wrap the column with `.desc()` to sort descending. `.sort()` is an alias for the same operation.
 
@@ -635,7 +696,7 @@ from pyspark.sql.functions import desc
 iris.orderBy(desc("sepal_length")).show()
 ```
 
-### Task 15 — Group by species, find mean sepal width and max sepal length
+### Task 21 — Group by species, find mean sepal width and max sepal length
 
 `.groupBy()` groups rows by a column, and `.agg()` applies aggregate functions to each group. The dictionary maps column names to aggregate functions — equivalent to `GROUP BY` with `AVG` and `MAX` in SQL.
 
@@ -645,7 +706,7 @@ iris.groupBy("species").agg({"sepal_width": "mean", "sepal_length": "max"}).show
 
 ![Iris groupby](../images/iris-groupby.png)
 
-### Task 16 — Replace species names with initials
+### Task 22 — Replace species names with initials
 
 `.withColumn()` creates or replaces a column. `when()` works like a SQL `CASE WHEN` — it checks conditions in order and returns the matching value. `.otherwise()` is the fallback if no condition matches.
 
@@ -661,9 +722,12 @@ iris.withColumn("species",
 
 ![Iris replace](../images/iris-replace.png)
 
-### Task 17 — Add missing values then drop rows with null species
+### Task 23 — Handle missing values
 
-`.replace()` swaps a specific value with `None` (null) across the DataFrame — here replacing all `0.2` values to simulate missing data. `.na.drop(subset=["species"])` then drops any rows where the species column is null. Since no species values were `0.2`, all rows are retained.
+`.replace()` swaps a specific value with `None` (null) across the DataFrame — here replacing all `0.2` values to simulate missing data. From there, three approaches:
+
+- `.na.drop(subset=["species"])` drops any rows where the specified column is null
+- `.na.fill()` replaces nulls with a default — pass a single value for all columns, or a dictionary for column-specific defaults
 
 ```python
 irisna = iris.replace(0.2, None)
@@ -678,7 +742,11 @@ irisna.na.drop(subset=["species"]).show()
 
 ![Iris dropna](../images/iris-dropna.png)
 
-### Task 18 — Join two DataFrames on species
+```python
+irisna.na.fill({"sepal_length": 0.0, "species": "unknown"}).show()
+```
+
+### Task 25 — Join two DataFrames on species
 
 Two new DataFrames are created — one with the average sepal length per species, one with the max. `.join()` combines them on the `species` column, equivalent to `JOIN ON` in SQL. This produces a single row per species with both the avg and max values side by side.
 
@@ -690,7 +758,15 @@ irisavg.join(irismax, irisavg.species == irismax.species).show()
 
 ![Iris join](../images/iris-join.png)
 
-### Task 19 — Store a DataFrame as a SQL view
+### Task 26 — Inspect the execution plan
+
+`.explain()` prints the logical and physical execution plan Spark will use to compute the DataFrame. Useful for understanding why a query is slow — you can see whether a filter is being pushed down, how joins are being handled, and what optimisations Catalyst applied.
+
+```python
+iris.filter(iris.sepal_length > 5.5).groupBy("species").count().explain()
+```
+
+### Task 27 — Store a DataFrame as a SQL view
 
 `.createOrReplaceTempView()` registers the DataFrame as a temporary SQL view in the Spark session. It doesn't persist any data — it just gives the DataFrame a name that SQL queries can reference. The view exists only for the duration of the session.
 
@@ -700,7 +776,7 @@ iris.createOrReplaceTempView("iris_view")
 
 ![Iris view](../images/iris-view.png)
 
-### Task 20 — Run a simple SQL SELECT query using PySpark
+### Task 28 — Run a simple SQL SELECT query using PySpark
 
 `spark.sql()` accepts a plain SQL string and runs it against any registered temp view. This bridges the gap between SQL and PySpark — useful when SQL is more readable than chaining DataFrame methods.
 
@@ -709,3 +785,21 @@ spark.sql("SELECT * FROM iris_view WHERE sepal_length > 5.5").show()
 ```
 
 ![Iris SQL](../images/iris-sql.png)
+
+### Task 29 — Convert to a pandas DataFrame
+
+`.toPandas()` collects the entire distributed DataFrame to the driver and returns it as a pandas DataFrame. Useful for small result sets that you want to plot with matplotlib or pass to a scikit-learn model. Avoid on large DataFrames — it pulls all data into the driver's memory.
+
+```python
+pandas_df = iris.toPandas()
+type(pandas_df)
+```
+
+### Task 30 — Repartition and coalesce
+
+`.repartition(n)` reshuffles data across `n` partitions — use when you want to increase parallelism or redistribute data evenly before a large operation. `.coalesce(n)` reduces the number of partitions without a full shuffle — use when you want to write fewer output files. `.rdd.getNumPartitions()` returns the current partition count.
+
+```python
+iris.repartition(4).rdd.getNumPartitions()   # increases to 4 partitions
+iris.coalesce(1).rdd.getNumPartitions()       # reduces to 1 partition
+```

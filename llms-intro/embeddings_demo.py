@@ -13,9 +13,9 @@ embeddings = model.encode(sentences)
 
 # print(embeddings)
 
-similarity = cosine_similarity(
-    [embeddings[0]],
-    embeddings
-)
+similarity_matrix = cosine_similarity(embeddings, embeddings)
 
-print(similarity)
+for i in range(len(sentences)):
+    for j in range(i + 1, len(sentences)):
+        score = similarity_matrix[i][j]
+        print(f"{sentences[i]!r} vs {sentences[j]!r}: {score:.4f}")

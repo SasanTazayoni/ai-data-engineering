@@ -321,3 +321,161 @@ In the diagram above, vectors A and B represent two different items — an orang
 ### Why it Matters
 
 In a RAG pipeline, when a user submits a query it is converted into a vector. That vector is then compared against all stored document vectors using cosine similarity. The documents with the highest similarity scores — the smallest angles — are the ones retrieved and injected into the prompt. This is the mechanism that makes semantic search work: not keyword overlap, but directional proximity in vector space.
+
+---
+
+## Code Examples
+
+The following scripts put the concepts above into practice. Each one builds on the last.
+
+---
+
+### embeddings_demo.py — Generating and Comparing Embeddings
+
+This script illustrates what embeddings are and how cosine similarity works in practice.
+
+**Step 1 — Load a model and define sentences**
+
+```python
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+sentences = [
+    "Machine learning is powerful",
+    "Artificial intelligence is growing rapidly",
+    "Pizza tastes great"
+]
+```
+
+`SentenceTransformer` loads a pre-trained embedding model. `all-MiniLM-L6-v2` is a lightweight model that converts sentences into 384-dimensional vectors. The three sentences are deliberately chosen — two are semantically related (ML and AI), one is completely unrelated (pizza).
+
+**Step 2 — Generate embeddings**
+
+```python
+embeddings = model.encode(sentences)
+```
+
+`model.encode()` converts each sentence into a vector of 384 numbers. The result is a NumPy array of shape `(3, 384)` — 3 sentences, 384 numbers each.
+
+**Step 3 — Compute the similarity matrix**
+
+```python
+similarity_matrix = cosine_similarity(embeddings, embeddings)
+```
+
+This compares every embedding against every other embedding, producing a 3×3 grid where each cell `[i][j]` is the cosine similarity score between sentence `i` and sentence `j`. The diagonal is always `1.0` — a sentence is perfectly similar to itself.
+
+**Step 4 — Print unique pairs only**
+
+```python
+for i in range(len(sentences)):
+    for j in range(i + 1, len(sentences)):
+        score = similarity_matrix[i][j]
+        print(f"{sentences[i]!r} vs {sentences[j]!r}: {score:.4f}")
+```
+
+`j = i + 1` ensures each pair is only printed once — comparing A vs B and B vs A would give the same score, so the upper triangle of the matrix is all that's needed. The result shows high similarity between the ML and AI sentences, and low similarity between either of them and the pizza sentence — exactly what you'd expect from a model that understands meaning.
+
+---
+
+### vector_search.py — Building a FAISS Vector Search Index
+
+This script shows how embeddings are stored in a searchable index using FAISS, and how a natural language query retrieves the most relevant documents.
+
+**Step 1 — Define documents and generate embeddings**
+
+```python
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+documents = [
+    "Machine learning uses data",
+    "Python is a programming language",
+    "Football is a popular sport"
+]
+
+embeddings = model.encode(documents).astype('float32')
+```
+
+Each document is converted to a 384-dimensional vector. `.astype('float32')` converts the numbers to 32-bit floats — FAISS requires this specific format.
+
+**Step 2 — Create and populate the FAISS index**
+
+```python
+dimension = embeddings.shape[1]
+index = faiss.IndexFlatL2(dimension)
+index.add(embeddings)
+```
+
+`embeddings.shape[1]` gives `384` — the size of each vector. `IndexFlatL2` creates the simplest FAISS index type: it stores all vectors and searches using L2 distance (straight-line distance between two points in vector space). `index.add()` loads all document embeddings into the index.
+
+**Step 3 — Encode a query and search**
+
+```python
+query = model.encode(["What programming languages are there?"]).astype('float32')
+distances, indices = index.search(query, k=2)
+```
+
+The query is converted into a vector using the same model, then `index.search()` finds the `k=2` closest document vectors. It returns `distances` (how far each result is — lower is better) and `indices` (the position of each result in the `documents` list).
+
+**Step 4 — Print results**
+
+```python
+for rank, (idx, dist) in enumerate(zip(indices[0], distances[0])):
+    print(f"{rank + 1}. {documents[idx]!r} (distance: {dist:.4f})")
+```
+
+`indices[0]` and `distances[0]` are the results for the first query. The loop pairs each result index with its distance and prints the matching document text. "Python is a programming language" ranks first — even though the query shares no words with it, the meaning is close in vector space.
+
+---
+
+### semantic_search.py — Interactive Semantic Search
+
+This script combines everything into a practical semantic search system where the user types a query in natural language and gets back the most relevant documents.
+
+**Step 1 — Build the document store and index**
+
+```python
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+documents = [
+    "Python is a popular programming language used in data science",
+    "Machine learning is a subset of artificial intelligence",
+    ...
+]
+
+embeddings = model.encode(documents).astype('float32')
+index = faiss.IndexFlatL2(embeddings.shape[1])
+index.add(embeddings)
+```
+
+The same setup as `vector_search.py` — documents are encoded and stored in the FAISS index before any searching happens. This is the offline step: in a real system, you'd do this once and persist the index to disk.
+
+**Step 2 — Accept a user query at runtime**
+
+```python
+query = input("Search: ")
+```
+
+`input()` pauses the programme and waits for the user to type a question. Whatever they type becomes the query string — this is what makes it interactive rather than hardcoded.
+
+**Step 3 — Encode the query and retrieve results**
+
+```python
+query_embedding = model.encode([query]).astype('float32')
+distances, indices = index.search(query_embedding, k=3)
+```
+
+The user's query is converted to a vector on the fly using the same model, then FAISS finds the top 3 closest documents.
+
+**Step 4 — Display results**
+
+```python
+for rank, (idx, dist) in enumerate(zip(indices[0], distances[0])):
+    print(f"{rank + 1}. {documents[idx]!r} (distance: {dist:.4f})")
+```
+
+Results are printed ranked by distance. Searching _"what's in France"_ returns Paris first and the Eiffel Tower second — neither result contains the word "France" in a way that traditional keyword search would catch, but the semantic meaning is close enough for the model to retrieve them correctly.
+
+This is the core of how RAG retrieval works in practice: a question comes in, gets embedded, and the closest documents in vector space are returned to be injected into an LLM prompt.

@@ -2,6 +2,8 @@
 
 ![Python](./tech/python.png) ![Apache Spark](./tech/apachespark.png) ![Databricks](./tech/databricks.png) ![AWS](./tech/aws.png) ![VSCode](./tech/vscode.png) ![Shell](./tech/shell.png) ![Claude](./tech/claude.png)
 
+> 💬 For interview-ready Q&A on this material, see **[interview.md](interview.md)**.
+
 ---
 
 ## What can be considered "Big Data"?
